@@ -1,0 +1,80 @@
+package com.pvp_utils.client.gui.clickgui;
+
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+
+public class ChangelogScreen extends Screen {
+    private static final String[] LINES = {
+            "v1.8-beta.8 (自定义版)",
+            "新增: 本地回放（战斗轻量回放录制与慢放）",
+            "回退: 移除本地音乐库 MP3 功能",
+            "回退: 移除 Fabric API 整合",
+            "回退: 移除 Python 自动化控制台",
+            "新增: 背包 HUD (不开背包看物品)",
+            "新增: 物品剩余 HUD (珍珠/金苹果/水晶)",
+            "新增: 战斗日志可拖动",
+            "新增: 左边模块栏滚轮滑动",
+            "优化: 液体玻璃性能",
+            "修复: cosmetica-core 兼容",
+            "v1.8-beta.12",
+            "新增: 左边模块栏滚轮滑动",
+            "修复: 物品剩余 HUD 数量显示",
+            "新增: 战斗日志可拖动",
+            "v1.8-beta.16",
+            "新增: 背包 HUD (不开背包看物品)",
+            "新增: 物品剩余 HUD (珍珠/金苹果/水晶)",
+            "新增: 盔甲耐久百分比开关",
+            "新增: 液体玻璃总开关",
+            "优化: 液体玻璃性能 (FPS 提升约 2 倍)",
+            "修复: 打开文件夹按钮",
+            "v1.8-beta.15",
+            "新增: 本地音乐库 (支持 MP3 拖入播放)",
+            "新增: MP3 ID3 歌词提取",
+            "新增: 音乐页面本地音乐 UI",
+            "新增: 合并官方液体玻璃渲染器",
+            "v1.8-beta.14",
+            "新增: 战斗日志",
+            "新增: 敌方护甲显示",
+            "新增: Sodium 兼容检测",
+            "新增: 左侧模块栏滚轮",
+            "修复: 英文翻译",
+            "v1.8-beta.12",
+            "新增: PVPUtils 玩家频道聊天 (需服务端安装 PVPUtilsServer)",
+            "修复: 掉落物雷达支持拖动移位",
+            "v1.8-beta.11",
+            "修复: 击杀闪电改为目标死亡时触发",
+            "新增: 离线皮肤修复",
+            "新增: 掉落物雷达 HUD",
+            "新增: 配置预设: 默认 / PVP / 低配优化",
+            "新增: 粒子优化",
+            "新增: 自定义面板颜色",
+            "新增: 独立聊天窗口",
+            "新增: 更新日志页面",
+            "整合: fabric-api 打包进模组",
+            "修复: 实体渲染剔除注入点崩溃",
+            "优化: 实体渲染距离剔除",
+            "优化: 内存自动清理",
+    };
+
+    public ChangelogScreen() {
+        super(Component.literal("Changelog"));
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
+        graphics.fillGradient(0, 0, this.width, this.height, 0xCC101418, 0xCC101418);
+        int y = 40;
+        for (String line : LINES) {
+            graphics.drawString(this.font, line, 30, y, 0xFFF2F4F8, false);
+            y += 14;
+        }
+        graphics.drawString(this.font, "按 ESC 返回", 30, y + 10, 0xFF9AA4B2, false);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+}
