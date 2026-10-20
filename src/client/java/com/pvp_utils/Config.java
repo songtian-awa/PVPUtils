@@ -54,6 +54,7 @@ public class Config {
     public static int localReplayIdleTicks = 120;
     public static boolean lowHealthNotify = false;
     public static boolean damageNumbers = false;
+    public static boolean killCard = true;
     public static boolean attackReachDisplay = false;
     public static boolean arraylist = false;
     public static boolean targetHud = false;
