@@ -128,6 +128,50 @@ public final class OfflineSkinManager {
         return new ClientAsset.ResourceTexture(texturePath, texturePath);
     }
 
+    /** 返回皮肤文件夹路径（用于展示或命令行提示） */
+    public static Path folderPath() {
+        init();
+        return EXTERNAL_PATH;
+    }
+
+    /** 选择指定皮肤文件并立即生效，返回是否成功 */
+    public static boolean select(String name) {
+        if (name == null || name.isBlank()) return false;
+        List<String> files = listPngs();
+        if (!files.contains(name)) return false;
+        if (!name.equals(Config.offlineSkinImage)) {
+            Config.offlineSkinImage = name;
+            Config.save();
+        }
+        destroy();
+        return true;
+    }
+
+    /** 从外部路径导入 PNG 皮肤到皮肤文件夹（重名自动加序号），返回新文件名，失败返回 null */
+    public static String importFrom(String sourcePath) {
+        if (sourcePath == null || sourcePath.isBlank()) return null;
+        Path source = Path.of(sourcePath.trim());
+        if (!Files.isRegularFile(source)) return null;
+        String lower = source.getFileName().toString().toLowerCase(Locale.ROOT);
+        if (!lower.endsWith(".png")) return null;
+        init();
+        String targetName = source.getFileName().toString();
+        Path target = EXTERNAL_PATH.resolve(targetName);
+        int suffix = 1;
+        while (Files.exists(target)) {
+            String base = targetName.substring(0, targetName.length() - 4);
+            target = EXTERNAL_PATH.resolve(base + "_" + suffix + ".png");
+            suffix++;
+        }
+        try {
+            Files.copy(source, target);
+        } catch (IOException e) {
+            System.out.println("[PVPUtils] OfflineSkin import failed: " + e.getMessage());
+            return null;
+        }
+        return target.getFileName().toString();
+    }
+
     private static void destroy() {
         if (loadedTextureId != null) {
             Minecraft.getInstance().getTextureManager().release(loadedTextureId);

@@ -8,6 +8,7 @@ import com.pvp_utils.client.command.impl.ClientNameCommand;
 import com.pvp_utils.client.command.impl.DotCommand;
 import com.pvp_utils.client.command.impl.HelpCommand;
 import com.pvp_utils.client.command.impl.ReplayCommand;
+import com.pvp_utils.client.command.impl.SkinCommand;
 import com.pvp_utils.client.command.impl.UpdateCommand;
 import com.pvp_utils.client.command.impl.VersionWarningCommand;
 import com.pvp_utils.client.util.ChatUtils;
@@ -26,7 +27,8 @@ public final class CommandManager {
             new ClientNameCommand(),
             new AutoGGCommand(),
             new AutoLoginCommand(),
-            new ReplayCommand()
+            new ReplayCommand(),
+            new SkinCommand()
     );
 
     private CommandManager() {

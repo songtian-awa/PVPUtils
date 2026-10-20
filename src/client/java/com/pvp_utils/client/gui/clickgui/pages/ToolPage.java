@@ -5,6 +5,7 @@ import com.pvp_utils.client.ModuleKeybindManager;
 import com.pvp_utils.client.Version;
 import com.pvp_utils.client.NeteaseMusic.NeteaseMusicManager;
 import com.pvp_utils.client.gui.clickgui.NewSettingsScreen;
+import com.pvp_utils.client.gui.clickgui.OfflineSkinScreen;
 import com.pvp_utils.client.gui.clickgui.UiText;
 import com.pvp_utils.client.gui.clickgui.widget.*;
 import com.pvp_utils.client.modules.impl.Render.CustomCapeManager;
@@ -245,6 +246,8 @@ public class ToolPage extends BasePage {
 
         modules.add(new SettingModule(UiText.t("离线皮肤", "Offline Skin"), UiText.t("离线模式下用本地 PNG 替换自己的皮肤", "Replace your skin with a local PNG when offline"),
                 new SettingToggle(() -> Config.offlineSkin, v -> { Config.offlineSkin = v; Config.save(); }))
+                .addSub(UiText.t("皮肤库管理", "Skin Library"), UiText.t("打开离线皮肤库，查看并选择皮肤", "Open the skin library to view and select skins"),
+                        new SettingButton(UiText.t("管理", "Manage"), () -> Minecraft.getInstance().setScreen(new OfflineSkinScreen())))
                 .addSub(UiText.t("打开目录", "Open Folder"), UiText.t("打开皮肤文件夹, 放入 64x64 的 PNG 皮肤", "Open the skin folder and drop a 64x64 PNG skin"),
                         new SettingButton(UiText.t("打开", "Open"), OfflineSkinManager::openFolder))
                 .addSub(UiText.t("切换皮肤", "Switch Skin"), UiText.t("切换当前使用的皮肤文件", "Switch the selected skin file"),

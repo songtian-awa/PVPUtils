@@ -8,6 +8,7 @@ public class ChangelogScreen extends Screen {
     private static final String[] LINES = {
             "v1.8-beta.9 (自定义版)",
             "新增: 本地回放（战斗轻量回放录制与慢放）",
+            "新增: 离线皮肤库（皮肤管理界面与快捷切换）",
             "回退: 移除本地音乐库 MP3 功能",
             "回退: 移除 Fabric API 整合",
             "回退: 移除 Python 自动化控制台",

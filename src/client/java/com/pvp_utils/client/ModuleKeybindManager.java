@@ -6,6 +6,8 @@ import com.pvp_utils.client.NeteaseMusic.NeteaseMusicManager;
 import com.pvp_utils.client.gui.clickgui.NewSettingsScreen;
 import com.pvp_utils.client.gui.clickgui.TermsScreen;
 import com.pvp_utils.client.gui.clickgui.widget.SettingModule;
+import com.pvp_utils.client.modules.impl.Render.OfflineSkinManager;
+import com.pvp_utils.client.util.ChatUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
@@ -18,6 +20,7 @@ public final class ModuleKeybindManager {
     public static final String ACTION_OPEN_MUSIC = "action.netease_music";
     public static final String ACTION_ZOOM = "action.zoom";
     public static final String ACTION_FREELOOK = "action.freelook";
+    public static final String ACTION_CYCLE_SKIN = "action.cycle_skin";
     private static final int MOUSE_KEY_OFFSET = -1000;
     private static final Map<String, Integer> KEYBINDS = new LinkedHashMap<>();
     private static final Map<String, SettingModule> MODULES = new LinkedHashMap<>();
@@ -158,6 +161,19 @@ public final class ModuleKeybindManager {
             NeteaseMusicManager.open();
             return;
         }
+        if (ACTION_CYCLE_SKIN.equals(id)) {
+            if (!Config.offlineSkin) {
+                ChatUtils.warning(Config.isChinese ? "离线皮肤未开启，请先在设置中打开开关" : "Offline skin is disabled, enable it in settings first");
+                return;
+            }
+            if (OfflineSkinManager.listPngs().isEmpty()) {
+                ChatUtils.warning(Config.isChinese ? "皮肤文件夹为空，请放入 PNG 皮肤文件" : "Skin folder is empty, drop a PNG skin file");
+                return;
+            }
+            OfflineSkinManager.cycleSkin();
+            ChatUtils.success(Config.isChinese ? "已切换皮肤: " + OfflineSkinManager.currentName() : "Switched skin: " + OfflineSkinManager.currentName());
+            return;
+        }
         if (ACTION_ZOOM.equals(id) || ACTION_FREELOOK.equals(id)) return;
         SettingModule module = MODULES.get(id);
         if (module != null) module.toggleFromKeybind();
@@ -168,6 +184,7 @@ public final class ModuleKeybindManager {
         KEYBINDS.putIfAbsent(ACTION_OPEN_MUSIC, GLFW.GLFW_KEY_RIGHT_CONTROL);
         KEYBINDS.putIfAbsent(ACTION_ZOOM, GLFW.GLFW_KEY_C);
         KEYBINDS.putIfAbsent(ACTION_FREELOOK, MOUSE_KEY_OFFSET - GLFW.GLFW_MOUSE_BUTTON_4);
+        KEYBINDS.putIfAbsent(ACTION_CYCLE_SKIN, GLFW.GLFW_KEY_F6);
     }
 
     private static void saveBindings() {
