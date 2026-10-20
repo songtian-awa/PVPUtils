@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 
 public class ChangelogScreen extends Screen {
     private static final String[] LINES = {
-            "v1.8-beta.8 (自定义版)",
+            "v1.8-beta.9 (自定义版)",
             "新增: 本地回放（战斗轻量回放录制与慢放）",
             "回退: 移除本地音乐库 MP3 功能",
             "回退: 移除 Fabric API 整合",
