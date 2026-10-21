@@ -4,7 +4,6 @@ import com.pvp_utils.Config;
 import com.pvp_utils.client.modules.impl.Tool.TitleDetector;
 import com.pvp_utils.client.modules.impl.Render.NotificationOverlay;
 import com.pvp_utils.client.modules.impl.Combat.HitMarkerRenderer;
-import com.pvp_utils.client.modules.impl.Combat.KillCardRenderer;
 import com.pvp_utils.client.modules.impl.Render.KeystrokesRenderer;
 import com.pvp_utils.client.modules.impl.Render.ArmorHudRenderer;
 import com.pvp_utils.client.modules.impl.Render.ArraylistRenderer;

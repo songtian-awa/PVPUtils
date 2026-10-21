@@ -51,7 +51,7 @@ public class CombatPage extends BasePage {
                                 () -> switch (Config.hitSoundCondition) { case BOTH -> 0; case MELEE -> 1; case RANGED -> 2; },
                                 i -> { Config.hitSoundCondition = switch (i) { case 1 -> Config.HitSoundCondition.MELEE; case 2 -> Config.HitSoundCondition.RANGED; default -> Config.HitSoundCondition.BOTH; }; Config.save(); })));
 
-        modules.add(new SettingModule(UiText.t("击杀卡牌", "Kill Card"), UiText.t("击杀实体时在屏幕中央展示卡牌（击杀者 / 武器 / 伤害），带渐入渐出动画", "Show a card in the center of the screen when you kill an entity (killer / weapon / damage) with fade animation"),
+        modules.add(new SettingModule(UiText.t("击杀卡牌", "Kill Card"), UiText.t("击杀实体时在目标 HUD 下方展示卡牌（击杀者 / 武器 / 伤害），带渐入渐出动画", "Show a card below the target HUD when you kill an entity (killer / weapon / damage) with fade animation"),
                 new SettingToggle(() -> Config.killCard, v -> { Config.killCard = v; Config.save(); })));
 
         modules.add(new SettingModule(UiText.t("本地回放", "Local Replay"), UiText.t("轻量录制战斗过程并支持慢放复盘，使用 .replay 命令查看录像", "Lightweight combat recording with slow-motion replay. Use .replay commands to view"),

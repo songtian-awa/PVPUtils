@@ -2,12 +2,11 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.command.CommandManager;
 import com.pvp_utils.client.modules.impl.Combat.HitMarkerRenderer;
-import com.pvp_utils.client.modules.impl.Combat.KillCardRenderer;
+import com.pvp_utils.client.modules.impl.Render.TargetHudRenderer;
 import com.pvp_utils.client.modules.impl.Combat.LocalReplay.LocalReplayManager;
 import com.pvp_utils.client.modules.impl.Tool.ServerAutoLoginManager;
 import com.pvp_utils.client.modules.impl.Render.ArmorTransparency.ArmorTransparencyManager;
 import com.pvp_utils.client.modules.impl.Render.DamageNumberRenderer;
-import com.pvp_utils.client.modules.impl.Render.TargetHudRenderer;
 import com.pvp_utils.client.modules.impl.Render.TpsHudRenderer;
 import com.pvp_utils.Config;
 import net.minecraft.client.Minecraft;
@@ -77,7 +76,7 @@ public class ClientPacketListenerMixin {
                         if (newHealth >= 0.0f && newHealth <= maxHealth + 0.01f && Math.abs(newHealth - oldHealth) >= 0.05f) {
                             DamageNumberRenderer.getInstance().syncHealth(living, newHealth);
                             if (newHealth <= 0.0f) {
-                                KillCardRenderer.getInstance().resolveKill(living.getId(), Math.max(0.0f, oldHealth - newHealth));
+                                TargetHudRenderer.getInstance().resolveKill(living.getId(), Math.max(0.0f, oldHealth - newHealth));
                             }
                             break;
                         }
@@ -121,7 +120,7 @@ public class ClientPacketListenerMixin {
                     LocalReplayManager.getInstance().onCombatHit(isRanged, isCrit, targetName);
                     if (livingTarget.isDeadOrDying()) {
                         LocalReplayManager.getInstance().onKill(targetName);
-                        KillCardRenderer.getInstance().onKillRequested(livingTarget);
+                        TargetHudRenderer.getInstance().onKillRequested(livingTarget);
                     }
                 }
 

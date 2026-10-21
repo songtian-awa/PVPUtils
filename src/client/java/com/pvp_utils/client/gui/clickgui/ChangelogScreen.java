@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 public class ChangelogScreen extends Screen {
     private static final String[] LINES = {
             "v1.8-beta.9 (自定义版)",
-            "新增: 击杀卡牌（击杀时屏幕中央展示击杀者 / 武器 / 伤害）",
+            "新增: 击杀卡牌（击杀时在目标 HUD 下方展示击杀者 / 武器 / 伤害）",
             "新增: 本地回放（战斗轻量回放录制与慢放）",
             "新增: 离线皮肤库（皮肤管理界面与快捷切换）",
             "回退: 移除本地音乐库 MP3 功能",

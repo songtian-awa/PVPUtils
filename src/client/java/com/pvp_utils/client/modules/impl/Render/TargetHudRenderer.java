@@ -30,6 +30,9 @@ import net.minecraft.world.phys.Vec3;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class TargetHudRenderer {
     private static final TargetHudRenderer INSTANCE = new TargetHudRenderer();
@@ -102,6 +105,34 @@ public class TargetHudRenderer {
     private static final long ANIM_DURATION = 200;
     private static final long HEALTH_TEXT_ANIM_DURATION = 220;
     private static final long ATTACK_DISTANCE_DISPLAY_DURATION = 2000;
+
+    // ==================== 击杀卡牌（Kill Card）====================
+    /** 卡牌总展示时长（毫秒） */
+    private static final long KILL_CARD_DURATION_MS = 3500L;
+    /** 渐入时长（毫秒） */
+    private static final long KILL_CARD_FADE_IN_MS = 220L;
+    /** 渐出时长（毫秒） */
+    private static final long KILL_CARD_FADE_OUT_MS = 520L;
+    /** 等待实体血量同步的超时时间（毫秒），超时后使用估算伤害兜底展示 */
+    private static final long KILL_CARD_PENDING_TIMEOUT_MS = 800L;
+    /** 卡牌外框颜色（击杀主题金橙） */
+    private static final int KILL_CARD_BORDER_COLOR = 0xFFE2B24B;
+    /** 卡牌背景顶部颜色 */
+    private static final int KILL_CARD_BG_TOP_COLOR = 0xE0182026;
+    /** 卡牌背景底部颜色 */
+    private static final int KILL_CARD_BG_BOTTOM_COLOR = 0xD0101418;
+    /** 击杀者名称颜色（金色） */
+    private static final int KILL_CARD_NAME_COLOR = 0xFFFFE08A;
+    /** 武器名称颜色（白色） */
+    private static final int KILL_CARD_WEAPON_COLOR = 0xFFF2F4F8;
+    /** 伤害数值颜色（红色，与伤害数字 HUD 一致） */
+    private static final int KILL_CARD_DAMAGE_COLOR = 0xFFFF5555;
+    /** 分隔符颜色 */
+    private static final int KILL_CARD_SEPARATOR_COLOR = 0xFF9AA4B2;
+    /** 待确认伤害的击杀请求：实体 ID -> 请求信息 */
+    private final Map<Integer, PendingKill> pendingKills = new HashMap<>();
+    /** 当前正在展示的击杀卡牌 */
+    private KillCard killCardCurrent = null;
 
     private static final int HUD_WIDTH = 160;
     private static final int HUD_HEIGHT = 40;
@@ -200,6 +231,7 @@ public class TargetHudRenderer {
     public void render(GuiGraphics graphics) {
         long now = System.currentTimeMillis();
         Minecraft client = Minecraft.getInstance();
+        renderKillCard(graphics, client, now);
         boolean editActive = HudEditOverlay.getInstance().isActive() && Config.targetHud;
 
         if (editActive && client.player != null) {
@@ -928,5 +960,217 @@ public class TargetHudRenderer {
             g = (int) (255 * t);
         }
         return 0xFF000000 | (r << 16) | (g << 8);
+    }
+
+    // ==================== 击杀卡牌逻辑（Kill Card）====================
+
+    /**
+     * 击杀事件触发时调用（此时实体血量尚未同步，先暂存击杀请求）。
+     * 若配置关闭或玩家状态缺失则直接忽略。
+     *
+     * @param target 被击杀的实体
+     */
+    public void onKillRequested(LivingEntity target) {
+        if (!Config.killCard || target == null) {
+            return;
+        }
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null || client.level == null) {
+            return;
+        }
+        String killerName = client.player.getDisplayName().getString();
+        String weaponName = client.player.getMainHandItem().isEmpty()
+                ? "徒手"
+                : client.player.getMainHandItem().getHoverName().getString();
+        pendingKills.put(target.getId(), new PendingKill(killerName, weaponName,
+                Math.max(0.0f, target.getHealth()), System.currentTimeMillis()));
+    }
+
+    /**
+     * 实体血量同步后调用，携带精确的致死伤害数值，弹出暂存的击杀请求并展示卡牌。
+     *
+     * @param entityId 实体 ID
+     * @param damage   致死伤害数值
+     */
+    public void resolveKill(int entityId, float damage) {
+        PendingKill pending = pendingKills.remove(entityId);
+        if (pending != null) {
+            showKillCard(pending.killerName, pending.weaponName, damage);
+        }
+    }
+
+    /**
+     * 每 tick 调用：处理超时未确认的击杀请求（兜底展示），并清理已过期的卡牌。
+     *
+     * @param client Minecraft 实例
+     */
+    public void tick(Minecraft client) {
+        long now = System.currentTimeMillis();
+        Iterator<Map.Entry<Integer, PendingKill>> iterator = pendingKills.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, PendingKill> entry = iterator.next();
+            PendingKill pending = entry.getValue();
+            if (now - pending.requestedAtMs > KILL_CARD_PENDING_TIMEOUT_MS) {
+                iterator.remove();
+                showKillCard(pending.killerName, pending.weaponName, pending.fallbackDamage);
+            }
+        }
+        if (killCardCurrent != null && now - killCardCurrent.startTimeMs > KILL_CARD_DURATION_MS) {
+            killCardCurrent = null;
+        }
+    }
+
+    private void showKillCard(String killerName, String weaponName, float damage) {
+        Minecraft client = Minecraft.getInstance();
+        if (!Config.killCard || client.player == null) {
+            return;
+        }
+        killCardCurrent = new KillCard(killerName, weaponName, formatKillDamage(damage), System.currentTimeMillis());
+    }
+
+    /**
+     * 在目标 HUD 区域正下方绘制击杀卡牌，位置随目标 HUD 联动，避免与其重叠。
+     * 保留渐入渐出与轻微上浮动画。
+     */
+    private void renderKillCard(GuiGraphics graphics, Minecraft client, long now) {
+        if (!Config.killCard || killCardCurrent == null) {
+            return;
+        }
+        if (client.player == null || client.level == null) {
+            return;
+        }
+
+        long elapsed = now - killCardCurrent.startTimeMs;
+        if (elapsed < 0 || elapsed > KILL_CARD_DURATION_MS) {
+            return;
+        }
+
+        float alpha = killCardAlphaAt(elapsed);
+        if (alpha <= 0.001f) {
+            return;
+        }
+
+        int guiW = client.getWindow().getGuiScaledWidth();
+        int guiH = client.getWindow().getGuiScaledHeight();
+        float hudScale = Math.max(0.5f, Config.targetHudScale);
+        boolean newMode = Config.targetHudMode == Config.TargetHudMode.NEW
+                || Config.targetHudMode == Config.TargetHudMode.BLUR;
+        int hudW = Math.round((newMode ? NEW_HUD_WIDTH : HUD_WIDTH) * hudScale);
+        int hudH = Math.round((newMode ? NEW_HUD_HEIGHT : HUD_HEIGHT) * hudScale);
+        int hudX = Math.max(0, Math.min((int) (guiW * 0.5f + Config.targetHudX), guiW - hudW));
+        int hudY = Math.max(0, Math.min((int) (guiH * 0.5f + Config.targetHudY), guiH - hudH));
+
+        // 轻微上浮动画：出现的前 0.6 秒内从下方 8 像素浮起
+        float lift = 0.0f;
+        if (elapsed < 600L) {
+            float t = elapsed / 600.0f;
+            lift = (1.0f - killCardEaseOutCubic(t)) * 8.0f;
+        }
+
+        // 文本行
+        String nameLine = killCardCurrent.killerName;
+        String infoLine = killCardCurrent.weaponName + "  -  " + killCardCurrent.damageText;
+
+        int titleWidth = client.font.width(nameLine);
+        int infoWidth = client.font.width(infoLine);
+        int cardWidth = Math.max(titleWidth, infoWidth) + 28;
+        int cardHeight = 54;
+        int cardCenterX = hudX + hudW / 2;
+        int cardY = hudY + hudH + 8;
+
+        float x = cardCenterX - cardWidth / 2.0f;
+        float y = cardY - cardHeight / 2.0f + lift;
+
+        int borderAlpha = Math.round(alpha * 255);
+        int border = killCardWithAlpha(KILL_CARD_BORDER_COLOR, borderAlpha);
+        int bgTop = killCardWithAlpha(KILL_CARD_BG_TOP_COLOR, borderAlpha);
+        int bgBottom = killCardWithAlpha(KILL_CARD_BG_BOTTOM_COLOR, borderAlpha);
+
+        // 外框 + 背景
+        graphics.fill(Math.round(x) - 2, Math.round(y) - 2, Math.round(x) + cardWidth + 2,
+                Math.round(y) + cardHeight + 2, border);
+        graphics.fillGradient(Math.round(x), Math.round(y), Math.round(x) + cardWidth,
+                Math.round(y) + cardHeight, bgTop, bgBottom);
+
+        // 击杀者名称
+        graphics.drawString(client.font, Component.literal(nameLine),
+                Math.round(x + (cardWidth - titleWidth) / 2.0f), Math.round(y + 10),
+                killCardWithAlpha(KILL_CARD_NAME_COLOR, borderAlpha), true);
+
+        // 分隔线
+        graphics.fill(Math.round(x) + 10, Math.round(y + 26), Math.round(x) + cardWidth - 10,
+                Math.round(y + 27), killCardWithAlpha(KILL_CARD_SEPARATOR_COLOR, Math.round(alpha * 140)));
+
+        // 武器与伤害
+        graphics.drawString(client.font, Component.literal(infoLine),
+                Math.round(x + (cardWidth - infoWidth) / 2.0f), Math.round(y + 34),
+                killCardWithAlpha(KILL_CARD_WEAPON_COLOR, borderAlpha), true);
+    }
+
+    /** 渐入渐出透明度：先快速淡入，保持，再缓慢淡出 */
+    private float killCardAlphaAt(long elapsed) {
+        if (elapsed < KILL_CARD_FADE_IN_MS) {
+            return killCardSmoothstep(0.0f, (float) KILL_CARD_FADE_IN_MS, (float) elapsed);
+        }
+        long remain = KILL_CARD_DURATION_MS - elapsed;
+        if (remain < KILL_CARD_FADE_OUT_MS) {
+            return killCardSmoothstep(0.0f, (float) KILL_CARD_FADE_OUT_MS, (float) remain);
+        }
+        return 1.0f;
+    }
+
+    private float killCardEaseOutCubic(float value) {
+        float t = 1.0f - killCardClamp(value, 0.0f, 1.0f);
+        return 1.0f - t * t * t;
+    }
+
+    private float killCardSmoothstep(float edge0, float edge1, float value) {
+        float t = killCardClamp((value - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+        return t * t * (3.0f - 2.0f * t);
+    }
+
+    private float killCardClamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    private int killCardWithAlpha(int color, int alpha) {
+        return (Math.max(0, Math.min(255, alpha)) << 24) | (color & 0x00FFFFFF);
+    }
+
+    private String formatKillDamage(float value) {
+        if (value >= 10.0f || Math.abs(value - Math.round(value)) < 0.05f) {
+            return String.valueOf(Math.round(value));
+        }
+        return String.format(java.util.Locale.ROOT, "%.1f", value);
+    }
+
+    /** 等待血量同步的击杀请求 */
+    private static final class PendingKill {
+        private final String killerName;
+        private final String weaponName;
+        private final float fallbackDamage;
+        private final long requestedAtMs;
+
+        private PendingKill(String killerName, String weaponName, float fallbackDamage, long requestedAtMs) {
+            this.killerName = killerName;
+            this.weaponName = weaponName;
+            this.fallbackDamage = fallbackDamage;
+            this.requestedAtMs = requestedAtMs;
+        }
+    }
+
+    /** 正在展示的击杀卡牌数据 */
+    private static final class KillCard {
+        private final String killerName;
+        private final String weaponName;
+        private final String damageText;
+        private final long startTimeMs;
+
+        private KillCard(String killerName, String weaponName, String damageText, long startTimeMs) {
+            this.killerName = killerName;
+            this.weaponName = weaponName;
+            this.damageText = damageText;
+            this.startTimeMs = startTimeMs;
+        }
     }
 }
