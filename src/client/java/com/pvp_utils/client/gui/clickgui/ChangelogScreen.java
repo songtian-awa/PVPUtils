@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 
 public class ChangelogScreen extends Screen {
     private static final String[] LINES = {
-            "v1.8-beta.9 (自定义版)",
+            "v1.8-beta.9",
             "新增: 单场战绩结算（对局结束自动统计本场 K/D / 命中率）",
             "新增: 自定义死亡画面（死亡时显示存活时间 / 击杀者统计卡）",
             "新增: 击杀卡牌（击杀时在目标 HUD 下方展示击杀者 / 武器 / 伤害）",

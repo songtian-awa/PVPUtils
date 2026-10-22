@@ -38,10 +38,10 @@ public class NewSettingsScreen extends SkiaScreen {
 
     private final List<BasePage> pages;
 
-    private static final String[] TAB_ICONS = {"\uE903", "\uE901", "\uE026", "\uE121", "\uE900", "\uE3A9", "\uE8F0", "\uE405"};
-    private static final String[] TAB_ICON_FONTS = {FontRenderer.ICON, FontRenderer.ICON, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.ICON, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS};
-    private static final String[] TAB_KEYS_ZH = {"战斗", "视觉", "工具", "优化", "其他", "主题", "模组", "音乐"};
-    private static final String[] TAB_KEYS_EN = {"Combat", "Render", "Tools", "Optimize", "Misc", "Theme", "Mods", "Music"};
+    private static final String[] TAB_ICONS = {"\uE903", "\uE901", "\uE026", "\uE121", "\uE900", "\uE3A9", "\uE405"};
+    private static final String[] TAB_ICON_FONTS = {FontRenderer.ICON, FontRenderer.ICON, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.ICON, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS};
+    private static final String[] TAB_KEYS_ZH = {"战斗", "视觉", "工具", "优化", "其他", "主题", "音乐"};
+    private static final String[] TAB_KEYS_EN = {"Combat", "Render", "Tools", "Optimize", "Misc", "Theme", "Music"};
 
     private int selectedTab = 0;
     private int hoveredTab = -1;
@@ -124,7 +124,7 @@ public class NewSettingsScreen extends SkiaScreen {
 
     public NewSettingsScreen(Screen parent) {
         super(Component.literal("Settings"), parent);
-        pages = new ArrayList<>(List.of(new CombatPage(), new RenderPage(), new ToolPage(), new OptimizePage(), new MiscPage(), new ThemePage(), new ModsPage(), new MusicPage()));
+        pages = new ArrayList<>(List.of(new CombatPage(), new RenderPage(), new ToolPage(), new OptimizePage(), new MiscPage(), new ThemePage(), new MusicPage()));
     }
 
     public void rebuildCurrentPage() {
@@ -135,7 +135,6 @@ public class NewSettingsScreen extends SkiaScreen {
             case 3 -> new OptimizePage();
             case 4 -> new MiscPage();
             case 5 -> new ThemePage();
-            case 6 -> new ModsPage();
             default -> new MusicPage();
         });
         invalidateScrollLayout();
