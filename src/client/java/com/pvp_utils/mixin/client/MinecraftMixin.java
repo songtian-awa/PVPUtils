@@ -2,6 +2,7 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.Config;
 import com.pvp_utils.client.modules.impl.Combat.MainHandAssistManager;
+import com.pvp_utils.client.modules.impl.Combat.MatchSummaryRenderer;
 import com.pvp_utils.client.modules.impl.Render.TargetHudRenderer;
 import com.pvp_utils.client.modules.impl.Tool.AutoChestDepositManager;
 import com.pvp_utils.client.modules.impl.Tool.FakePlayerManager;
@@ -53,6 +54,7 @@ public class MinecraftMixin {
         TimeWeatherChanger.tick((Minecraft) (Object) this);
         DamageNumberRenderer.getInstance().tick((Minecraft) (Object) this);
         TargetHudRenderer.getInstance().tick((Minecraft) (Object) this);
+        MatchSummaryRenderer.getInstance().tick((Minecraft) (Object) this);
         if (pvp_utils$shouldShowUseAttackVisual()) {
             pvp_utils$playUseAttackVisual();
         }
@@ -104,6 +106,7 @@ public class MinecraftMixin {
 
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
     private void attackFakePlayer(CallbackInfoReturnable<Boolean> cir) {
+        MatchSummaryRenderer.getInstance().onAttack();
         if (FakePlayerManager.tryAttack((Minecraft) (Object) this)) {
             cir.setReturnValue(true);
         }

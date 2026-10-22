@@ -2,6 +2,7 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.command.CommandManager;
 import com.pvp_utils.client.modules.impl.Combat.HitMarkerRenderer;
+import com.pvp_utils.client.modules.impl.Combat.MatchSummaryRenderer;
 import com.pvp_utils.client.modules.impl.Render.TargetHudRenderer;
 import com.pvp_utils.client.modules.impl.Combat.LocalReplay.LocalReplayManager;
 import com.pvp_utils.client.modules.impl.Tool.ServerAutoLoginManager;
@@ -116,9 +117,11 @@ public class ClientPacketListenerMixin {
 
                 // 本地回放：记录造成伤害 / 击杀事件
                 if (livingTarget != client.player) {
+                    MatchSummaryRenderer.getInstance().onHit();
                     String targetName = livingTarget.getDisplayName().getString();
                     LocalReplayManager.getInstance().onCombatHit(isRanged, isCrit, targetName);
                     if (livingTarget.isDeadOrDying()) {
+                        MatchSummaryRenderer.getInstance().onKill();
                         LocalReplayManager.getInstance().onKill(targetName);
                         TargetHudRenderer.getInstance().onKillRequested(livingTarget);
                     }

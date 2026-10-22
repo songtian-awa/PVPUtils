@@ -55,6 +55,8 @@ public class Config {
     public static boolean lowHealthNotify = false;
     public static boolean damageNumbers = false;
     public static boolean killCard = true;
+    public static boolean matchSummary = true;
+    public static boolean customDeathScreen = true;
     public static boolean attackReachDisplay = false;
     public static boolean arraylist = false;
     public static boolean targetHud = false;

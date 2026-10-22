@@ -4,6 +4,7 @@ import com.pvp_utils.Config;
 import com.pvp_utils.client.modules.impl.Tool.TitleDetector;
 import com.pvp_utils.client.modules.impl.Render.NotificationOverlay;
 import com.pvp_utils.client.modules.impl.Combat.HitMarkerRenderer;
+import com.pvp_utils.client.modules.impl.Combat.MatchSummaryRenderer;
 import com.pvp_utils.client.modules.impl.Render.KeystrokesRenderer;
 import com.pvp_utils.client.modules.impl.Render.ArmorHudRenderer;
 import com.pvp_utils.client.modules.impl.Render.ArraylistRenderer;
@@ -110,6 +111,8 @@ public class GuiMixin {
         MusicInfoHudRenderer.getInstance().render(guiGraphics);
         guiGraphics.renderDeferredElements();
         BlockCountDisplayRenderer.getInstance().render(guiGraphics, null);
+        guiGraphics.renderDeferredElements();
+        MatchSummaryRenderer.getInstance().render(guiGraphics);
         guiGraphics.renderDeferredElements();
     }
 

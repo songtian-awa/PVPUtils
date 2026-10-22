@@ -33,3 +33,7 @@ src/client/resources/assets/pvp_utils/ircserver/
 
 .mimosa/
 .zcode/
+
+
+# 由 gj push 工具维护的排除项
+Cadence/

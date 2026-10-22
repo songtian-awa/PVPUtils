@@ -54,6 +54,12 @@ public class CombatPage extends BasePage {
         modules.add(new SettingModule(UiText.t("击杀卡牌", "Kill Card"), UiText.t("击杀实体时在目标 HUD 下方展示卡牌（击杀者 / 武器 / 伤害），带渐入渐出动画", "Show a card below the target HUD when you kill an entity (killer / weapon / damage) with fade animation"),
                 new SettingToggle(() -> Config.killCard, v -> { Config.killCard = v; Config.save(); })));
 
+        modules.add(new SettingModule(UiText.t("单场战绩结算", "Match Summary"), UiText.t("对局结束自动统计本场 K/D 与命中率并展示", "Automatically show K/D and accuracy stats when the match ends"),
+                new SettingToggle(() -> Config.matchSummary, v -> { Config.matchSummary = v; Config.save(); })));
+
+        modules.add(new SettingModule(UiText.t("自定义死亡画面", "Custom Death Screen"), UiText.t("死亡时显示统计卡：存活时间 / 击杀者", "Show a stats card with survival time and killer on death"),
+                new SettingToggle(() -> Config.customDeathScreen, v -> { Config.customDeathScreen = v; Config.save(); })));
+
         modules.add(new SettingModule(UiText.t("本地回放", "Local Replay"), UiText.t("轻量录制战斗过程并支持慢放复盘，使用 .replay 命令查看录像", "Lightweight combat recording with slow-motion replay. Use .replay commands to view"),
                 new SettingToggle(() -> Config.localReplay, v -> { Config.localReplay = v; Config.save(); }))
                 .addSub(UiText.t("自动录制", "Auto Record"), UiText.t("命中 / 受击 / 击杀时自动录制战斗段，战斗结束后自动保存", "Auto-record combat segments on hit / hurt / kill, and auto-save when combat ends"),
