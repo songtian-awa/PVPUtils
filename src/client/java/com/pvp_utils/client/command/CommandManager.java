@@ -7,6 +7,7 @@ import com.pvp_utils.client.command.impl.ClientCommandPrefixCommand;
 import com.pvp_utils.client.command.impl.ClientNameCommand;
 import com.pvp_utils.client.command.impl.DotCommand;
 import com.pvp_utils.client.command.impl.HelpCommand;
+import com.pvp_utils.client.command.impl.PluginCommand;
 import com.pvp_utils.client.command.impl.ReplayCommand;
 import com.pvp_utils.client.command.impl.SkinCommand;
 import com.pvp_utils.client.command.impl.UpdateCommand;
@@ -28,7 +29,8 @@ public final class CommandManager {
             new AutoGGCommand(),
             new AutoLoginCommand(),
             new ReplayCommand(),
-            new SkinCommand()
+            new SkinCommand(),
+            new PluginCommand()
     );
 
     private CommandManager() {

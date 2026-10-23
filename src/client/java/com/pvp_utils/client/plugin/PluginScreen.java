@@ -1,28 +1,25 @@
 package com.pvp_utils.client.plugin;
 
-import com.pvp_utils.client.render.skia.SkijaScreen;
+import com.pvp_utils.client.render.skia.SkiaScreen;
 import io.github.humbleui.skija.Canvas;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 
-public final class PluginScreen extends Screen implements SkijaScreen {
+public final class PluginScreen extends SkiaScreen {
     private final String plugin;
     private final String id;
-    private final Screen parent;
     private boolean removed;
 
     public PluginScreen(String plugin, String id, String title, Screen parent) {
-        super(Component.literal(title));
+        super(Component.literal(title), parent);
         this.plugin = plugin;
         this.id = id;
-        this.parent = parent;
     }
 
     public String plugin() { return plugin; }
-    public Screen parent() { return parent; }
+    public Screen parent() { return super.parent; }
 
     @Override
     public void added() {
@@ -38,14 +35,13 @@ public final class PluginScreen extends Screen implements SkijaScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
-
-    @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
-
-    @Override
-    public void renderSkija(Canvas canvas) {
+    protected void drawSkia(Canvas canvas, int width, int height, int mouseX, int mouseY, float delta) {
         if (!removed && minecraft.screen == this) PluginManager.INSTANCE.renderScreen(plugin, id, canvas, width, height);
+    }
+
+    @Override
+    protected boolean needsContinuousRedraw() {
+        return true;
     }
 
     @Override
@@ -81,8 +77,13 @@ public final class PluginScreen extends Screen implements SkijaScreen {
     }
 
     @Override
-    public void onClose() { minecraft.setScreen(parent); }
+    public void onClose() {
+        requestRedraw();
+        super.onClose();
+    }
 
     @Override
-    public boolean isPauseScreen() { return false; }
+    public boolean isPauseScreen() {
+        return false;
+    }
 }

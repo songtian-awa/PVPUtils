@@ -8,6 +8,9 @@ import com.pvp_utils.client.VersionWarningManager;
 import com.pvp_utils.client.CacheCleaner;
 import com.pvp_utils.client.net.ChannelChatManager;
 import com.pvp_utils.client.command.CommandManager;
+import com.pvp_utils.client.plugin.PluginManager;
+import com.pvp_utils.client.render.skia.SkiaRenderer;
+import com.pvp_utils.client.render.skia.SkiaScreen;
 import com.pvp_utils.client.gui.clickgui.theme.ClickGuiThemeManager;
 import com.pvp_utils.client.render.MainUI.MainUIBackgrounds;
 import com.pvp_utils.client.render.MainUI.MainUIScreenManager;
@@ -30,6 +33,7 @@ import com.pvp_utils.client.modules.impl.Tool.ServerAutoLoginManager;
 import com.pvp_utils.client.modules.impl.Tool.Zoom.ZoomManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import io.github.humbleui.skija.Canvas;
 import net.minecraft.client.Minecraft;
 
 public class PVPUtilsClient implements ClientModInitializer {
@@ -50,6 +54,7 @@ public class PVPUtilsClient implements ClientModInitializer {
         ModuleKeybindManager.initialize();
         MainUIScreenManager.init();
         CommandManager.register();
+        PluginManager.INSTANCE.initialize();
 
         net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback.EVENT.register((graphics, delta) -> {
             com.pvp_utils.client.modules.impl.Render.CombatLogRenderer.getInstance().render(graphics);
@@ -57,11 +62,25 @@ public class PVPUtilsClient implements ClientModInitializer {
             com.pvp_utils.client.modules.impl.Render.FpsHudRenderer.getInstance().render(graphics);
             com.pvp_utils.client.modules.impl.Render.OptimizationModsPanel.getInstance().render(graphics);
             com.pvp_utils.client.modules.impl.Render.ItemCountHudRenderer.getInstance().render(graphics);
+            Minecraft mc = Minecraft.getInstance();
+            int guiWidth = mc.getWindow().getGuiScaledWidth();
+            int guiHeight = mc.getWindow().getGuiScaledHeight();
+            if (mc.screen == null || !(mc.screen instanceof SkiaScreen)) {
+                Canvas canvas = SkiaRenderer.beginRegion(0, 0, guiWidth, guiHeight);
+                try {
+                    PluginManager.INSTANCE.render(canvas, guiWidth, guiHeight);
+                } finally {
+                    SkiaRenderer.endRegion(graphics);
+                }
+            }
         });
         Update.startAutoCheck();
+        Runtime.getRuntime().addShutdownHook(new Thread(PluginManager.INSTANCE::close, "PVPUtils-PluginShutdown"));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             com.pvp_utils.client.optimize.GameOptimizer.getInstance().onClientTick();
+            PluginManager.INSTANCE.prepareTick();
+            PluginManager.INSTANCE.tick(client);
             AutoChestDepositManager.tick(client);
             AutoGGManager.tick(client);
             ServerAutoLoginManager.tick(client);
