@@ -2,12 +2,14 @@
 AIGC:
     Label: "1"
     ContentProducer: 001191440300708461136T1XGW3
-    ProduceID: ffc8a205f489a8facd45506b4bbd66cd_76a546f6ce0911f18a50525400cd780f
-    ReservedCode1: UiR5wBwm7SNPwcyC5XBK02PRIE+4iwC5WMigQSik4zjopTIFamrvSy6vdR8KnQSWBzQj/P3VxYX0ZnSkwgsvbTFIeWZ5sASGpxGLKRiMvV1jpRcrmCXNfSwzQ1+vwRnGll9FdMS7JTU5hoV2q/PZiCbRue1GalHRo6qPVDIwtQYbeMAb/kZn+J3YuIM=
+    ProduceID: ffc8a205f489a8facd45506b4bbd66cd_12d517accedf11f19fe7525400de85a5
+    ReservedCode1: oD4LXmlXZYZDFQfKhJJ2FO9EBgluFY0KucaEyQQOEJpmLpDGGQkJXSHd3DVMzr36El73ibU7D4Gw678YLT/J4oUbyyQX+Z0f3P47qyk+u8s9+Bqs9r/IAdXnkP8s6XZqYPedSHBnosXknxS8RVjL4a1XsB3QG8leX54MukbDkgiCcwX0fyq/jNVm7ZI=
     ContentPropagator: 001191440300708461136T1XGW3
-    PropagateID: ffc8a205f489a8facd45506b4bbd66cd_76a546f6ce0911f18a50525400cd780f
-    ReservedCode2: UiR5wBwm7SNPwcyC5XBK02PRIE+4iwC5WMigQSik4zjopTIFamrvSy6vdR8KnQSWBzQj/P3VxYX0ZnSkwgsvbTFIeWZ5sASGpxGLKRiMvV1jpRcrmCXNfSwzQ1+vwRnGll9FdMS7JTU5hoV2q/PZiCbRue1GalHRo6qPVDIwtQYbeMAb/kZn+J3YuIM=
+    PropagateID: ffc8a205f489a8facd45506b4bbd66cd_12d517accedf11f19fe7525400de85a5
+    ReservedCode2: oD4LXmlXZYZDFQfKhJJ2FO9EBgluFY0KucaEyQQOEJpmLpDGGQkJXSHd3DVMzr36El73ibU7D4Gw678YLT/J4oUbyyQX+Z0f3P47qyk+u8s9+Bqs9r/IAdXnkP8s6XZqYPedSHBnosXknxS8RVjL4a1XsB3QG8leX54MukbDkgiCcwX0fyq/jNVm7ZI=
 ---
+
+
 
 # PVPUtils 插件系统整合说明
 
@@ -58,4 +60,5 @@ PVPUtils 本地自定义版此前一直停留在自定义功能阶段，官方�
 
 - 插件脚本运行在受控脚本环境中，存在执行时间与资源限制，异常脚本会被隔离并标记失败，不影响客户端主体运行。
 - 插件 API 与官方 PVPUtils 保持一致，已有官方插件脚本无需修改即可加载。
+*（内容由AI生成，仅供参考）*
 *（内容由AI生成，仅供参考）*

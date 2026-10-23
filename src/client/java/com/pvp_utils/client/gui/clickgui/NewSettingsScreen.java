@@ -161,7 +161,7 @@ public class NewSettingsScreen extends SkiaScreen {
         float resetH = 34f;
         float closeY = cardY + cardH - 48f;
         float resetY = closeY - resetH - 8f;
-        float tabH = Math.min(38f, (resetY - tabStartY - (TAB_KEYS_ZH.length - 1) * tabGap) / TAB_KEYS_ZH.length);
+        float tabH = 38f;
         float closeX = cardX + 12f;
         float contentX = cardX + sidebarW + 1f;
         float contentW = cardW - sidebarW - 1f;
@@ -362,8 +362,9 @@ public class NewSettingsScreen extends SkiaScreen {
 
         int hovered = -1;
         for (int i = 0; i < TAB_KEYS_ZH.length; i++) {
-            float ty = tabStartY + i * (tabH + tabGap);
-            if (mx >= cardX + 12f && mx <= cardX + 12f + tabW && my >= ty && my <= ty + tabH) {
+            float ty = tabStartY + i * (tabH + tabGap) + sidebarScrollOffset;
+            if (ty >= tabStartY - 0.5f && ty + tabH <= resetY + 0.5f
+                    && mx >= cardX + 12f && mx <= cardX + 12f + tabW && my >= ty && my <= ty + tabH) {
                 hovered = i;
                 break;
             }
@@ -385,12 +386,13 @@ public class NewSettingsScreen extends SkiaScreen {
         if (SettingTextBox.isFocused()) return true;
         if (draggingInContent || draggingScrollbar) return true;
         if (Math.abs(contentScrollOffset - targetScrollOffset) > 0.35f) return true;
+        if (Math.abs(sidebarScrollOffset - targetSidebarScrollOffset) > 0.35f) return true;
         if (closeHoverAlpha > 0.01f || closeHovered) return true;
         if (resetHoverAlpha > 0.01f || resetHovered) return true;
         if (searchFocused || searchFocusAlpha > 0.01f || Math.abs(searchTextOffset) > 0.01f) return true;
         if (indicatorY < 0f) return true;
         float[] l = layout(layoutWidth(), layoutHeight());
-        float targetIndicatorY = l[5] + selectedTab * (l[6] + l[7]);
+        float targetIndicatorY = l[5] + selectedTab * (l[6] + l[7]) + sidebarScrollOffset;
         if (Math.abs(indicatorY - targetIndicatorY) > 0.35f) return true;
         for (float alpha : tabHoverAlpha) if (alpha > 0.01f && alpha < 0.99f) return true;
         return activePage().hasAnimatingModules();
@@ -439,8 +441,10 @@ public class NewSettingsScreen extends SkiaScreen {
         closeHovered = false;
         resetHovered = false;
         for (int i = 0; i < TAB_KEYS_ZH.length; i++) {
-            float ty = tabStartY + i * (tabH + tabGap);
-            if (layoutMouseX >= cardX + 12f && layoutMouseX <= cardX + 12f + tabW && layoutMouseY >= ty && layoutMouseY <= ty + tabH)
+            float ty = tabStartY + i * (tabH + tabGap) + sidebarScrollOffset;
+            if (ty >= tabStartY - 0.5f && ty + tabH <= resetY + 0.5f
+                    && layoutMouseX >= cardX + 12f && layoutMouseX <= cardX + 12f + tabW
+                    && layoutMouseY >= ty && layoutMouseY <= ty + tabH)
                 hoveredTab = i;
         }
         if (layoutMouseX >= closeX && layoutMouseX <= closeX + tabW && layoutMouseY >= closeY && layoutMouseY <= closeY + closeH)
@@ -458,7 +462,7 @@ public class NewSettingsScreen extends SkiaScreen {
         searchFocusAlpha = lerp(searchFocusAlpha, searchFocused ? 1f : 0f, dt * 14f);
         searchCursorTime += dt;
 
-        float targetIndicatorY = tabStartY + selectedTab * (tabH + tabGap);
+        float targetIndicatorY = tabStartY + selectedTab * (tabH + tabGap) + sidebarScrollOffset;
         if (indicatorY < 0f) indicatorY = targetIndicatorY;
         indicatorY = lerp(indicatorY, targetIndicatorY, dt * 12f);
 
@@ -503,6 +507,8 @@ public class NewSettingsScreen extends SkiaScreen {
         drawSearchBox(canvas, searchX, searchY, searchW, searchH, alpha, dt, tc);
 
         indicatorPaint.setColor(withAlpha(tc.indicator, ClickGuiThemeColors.panelBackgroundAlpha(alpha)));
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(cardX + 12f, tabStartY, tabW, resetY - tabStartY));
         canvas.drawRRect(RRect.makeXYWH(cardX + 12f, indicatorY, tabW, tabH, 8f), indicatorPaint);
 
         for (int i = 0; i < TAB_KEYS_ZH.length; i++) {
@@ -517,6 +523,7 @@ public class NewSettingsScreen extends SkiaScreen {
             FontRenderer.drawText(canvas, TAB_ICONS[i], cardX + 18f, tabY + tabH / 2f + 6f, 13f, iconColor, TAB_ICON_FONTS[i]);
             FontRenderer.drawText(canvas, UiText.t(TAB_KEYS_ZH[i], TAB_KEYS_EN[i]), cardX + 38f, tabY + tabH / 2f + 6f, 13f, textColor);
         }
+        canvas.restore();
 
         int closeBgColor = lerpColor(tc.buttonBackground, tc.dangerHoverBackground, closeHoverAlpha);
         int closeTextColor = lerpColor(tc.buttonText, tc.dangerHoverText, closeHoverAlpha);
@@ -919,8 +926,9 @@ public class NewSettingsScreen extends SkiaScreen {
         }
 
         for (int i = 0; i < TAB_KEYS_ZH.length; i++) {
-            float ty = tabStartY + i * (tabH + tabGap);
-            if (mx >= cardX + 12f && mx <= cardX + 12f + tabW && my >= ty && my <= ty + tabH) {
+            float ty = tabStartY + i * (tabH + tabGap) + sidebarScrollOffset;
+            if (ty >= tabStartY - 0.5f && ty + tabH <= resetY + 0.5f
+                    && mx >= cardX + 12f && mx <= cardX + 12f + tabW && my >= ty && my <= ty + tabH) {
             if (button == 0) {
                 clearSearch();
                 themePreviewMode = false;
@@ -1050,8 +1058,13 @@ public class NewSettingsScreen extends SkiaScreen {
         float sidebarW = l[4];
         if (layoutMx >= navX && layoutMx <= navX + navW && layoutMy >= navY && layoutMy <= navY + navH) {
             if (layoutMx <= navX + sidebarW) {
-                float maxScroll = Math.max(0f, TAB_KEYS_ZH.length * 32f - (navH - 120f));
-                targetSidebarScrollOffset = Math.max(-maxScroll, Math.min(0f, targetSidebarScrollOffset + (float)(-vScroll * 16f)));
+                float tabStartY = l[5];
+                float tabH = l[6], tabGap = l[7];
+                float resetY = l[12];
+                float tabListHeight = TAB_KEYS_ZH.length * (tabH + tabGap);
+                float sidebarViewH = Math.max(1f, resetY - tabStartY);
+                float maxScroll = Math.max(0f, tabListHeight - sidebarViewH);
+                targetSidebarScrollOffset = Math.max(-maxScroll, Math.min(0f, targetSidebarScrollOffset + (float)(vScroll * 16f)));
                 return true;
             }
             targetScrollOffset = Math.max(0f, Math.min(cachedScrollMax, targetScrollOffset + (float)(-vScroll * 16f * Math.max(0.2f, Config.clickGuiScrollSpeed))));
