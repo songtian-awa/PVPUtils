@@ -9,6 +9,7 @@ public class ChangelogScreen extends Screen {
     private static final String[] LINES_ZH = {
             "v1.8-beta.9",
             "新增: 全语言翻译（基于 Minecraft 标准语言文件的多语言支持）",
+            "新增: 更新地址选择（可在其他设置中选择宋天或白菜的更新源）",
             "新增: 单场战绩结算（对局结束自动统计本场 K/D / 命中率）",
             "新增: 自定义死亡画面（死亡时显示存活时间 / 击杀者统计卡）",
             "新增: 击杀卡牌（击杀时在目标 HUD 下方展示击杀者 / 武器 / 伤害）",

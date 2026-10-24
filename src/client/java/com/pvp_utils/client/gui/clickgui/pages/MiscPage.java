@@ -33,6 +33,12 @@ public class MiscPage extends BasePage {
                                 () -> Config.isChinese ? 0 : 1,
                                 i -> { Config.isChinese = i == 0; Config.save(); })));
 
+        modules.add(new SettingModule(UiText.t("更新地址", "Update Source"), UiText.t("选择更新检查使用的更新源，默认为宋天", "Choose which update source to use for update checks, default is Song Tian"), null)
+                .addSub(UiText.t("更新源", "Update Source"), UiText.t("宋天为我们的更新地址，白菜为官方更新地址", "Song Tian is our update address, Bai Cai is the official update address"),
+                        new SettingCycle(List.of(UiText.t("宋天", "Song Tian"), UiText.t("白菜", "Bai Cai")),
+                                () -> Config.updateSource == Config.UpdateSource.SONG_TIAN ? 0 : 1,
+                                i -> { Config.updateSource = i == 0 ? Config.UpdateSource.SONG_TIAN : Config.UpdateSource.BAI_CAI; Config.save(); })));
+
         if (Config.restrictedFeaturesUnlocked()) {
             modules.add(new SettingModule(UiText.t("完整性设置", "Integrity Settings"), UiText.t("在此处控制客户端功能的完整性", "Control client feature integrity here"), null)
                     .addSub(UiText.t("完整性切换", "Integrity Switch"), UiText.t("如果你阅读且同意了告知书，则会切换到完整模式，反之则为受限模式", "Switches to full mode if you have read and agreed to the notice, otherwise restricted mode is used"),

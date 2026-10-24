@@ -206,6 +206,7 @@ public class Config {
     public static boolean fullMode = false;
     public static String clientName = "PVPUtils";
     public static String updateMirror = "https://ghfast.top/";
+    public static UpdateSource updateSource = UpdateSource.SONG_TIAN;
     public static String autoGGText = "gg";
     public static String nickHiderNickname = "You";
     public static String mainUIBackgroundImage = "1.png";
@@ -397,6 +398,7 @@ public class Config {
     public enum WeatherMode { CLEAR, RAIN, SNOW, THUNDER }
     public enum ItemUseStatusMode { LITE, NEW }
     public enum FreelookTriggerMode { HOLD, TOGGLE }
+    public enum UpdateSource { SONG_TIAN, BAI_CAI }
     public enum HudStyle { LITE, NEW, BLUR }
     public enum MainUIBackgroundMode { GLSL, IMAGE, VIDEO }
     public enum MainUIGlslMode { RANDOM, FIXED }

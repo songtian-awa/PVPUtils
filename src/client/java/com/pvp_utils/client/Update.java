@@ -24,7 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Update {
-    private static final String GIT_UPDATE_URL = "https://raw.githubusercontent.com/bakabaicai/PVPUtils/main/Update";
+    private static final String OFFICIAL_UPDATE_URL = "https://raw.githubusercontent.com/bakabaicai/PVPUtils/main/Update";
+    private static final String OUR_UPDATE_URL = "https://raw.githubusercontent.com/songtian-awa/PVPUtils/main/Update";
     private static final String CURSEFORGE_URL = "https://www.curseforge.com/minecraft/mc-mods/pvputils";
     private static final String MODRINTH_URL = "https://modrinth.com/mod/pvp_utils";
     private static final String GITHUB_URL = "https://github.com/bakabaicai/PVPUtils/releases";
@@ -195,7 +196,7 @@ public final class Update {
         if (!mirror.endsWith("/")) {
             mirror = mirror + "/";
         }
-        return fetchUpdateText(URI.create(mirror + GIT_UPDATE_URL));
+        return fetchUpdateText(URI.create(mirror + selectedUpdateUrl()));
     }
 
     private static String fetchUpdateText(URI uri) throws IOException, InterruptedException {
@@ -214,9 +215,14 @@ public final class Update {
         return response.body() == null ? "" : response.body();
     }
 
+    private static String selectedUpdateUrl() {
+        return Config.updateSource == Config.UpdateSource.BAI_CAI ? OFFICIAL_UPDATE_URL : OUR_UPDATE_URL;
+    }
+
     private static URI buildGitUpdateUri() {
-        String separator = GIT_UPDATE_URL.contains("?") ? "&" : "?";
-        return URI.create(GIT_UPDATE_URL + separator + "t=" + System.currentTimeMillis());
+        String url = selectedUpdateUrl();
+        String separator = url.contains("?") ? "&" : "?";
+        return URI.create(url + separator + "t=" + System.currentTimeMillis());
     }
 
     private static UpdateResult parse(String body) {
