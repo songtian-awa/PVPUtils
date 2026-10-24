@@ -346,16 +346,28 @@ public final class Update {
             return selected == null ? null : selected.version;
         }
 
+        String displayVersion() {
+            String version = fetchedVersion();
+            if (version == null || version.isBlank()) {
+                return null;
+            }
+            return version.startsWith("v") || version.startsWith("V") ? version : "v" + version;
+        }
+
         MutableComponent updateAvailableMessage() {
             String kind = updateKindText();
+            String version = displayVersion();
             MutableComponent base = Component.literal(Config.isChinese
-                    ? "检测到新的" + kind + "更新，点击前往更新 "
-                    : "A new " + kind + " update is available, click to update ")
+                    ? "检测到新的" + kind + "更新（" + version + "），点击前往更新："
+                    : "A new " + kind + " update is available (" + version + "), click to update: ")
                     .withStyle(ChatFormatting.GREEN);
             return base
                     .append(link("[Curseforge]", CURSEFORGE_URL, ChatFormatting.GOLD, null))
+                    .append(linkGap())
                     .append(link("[Modrinth]", MODRINTH_URL, ChatFormatting.GREEN, null))
+                    .append(linkGap())
                     .append(link("[Github]", GITHUB_URL, ChatFormatting.WHITE, null))
+                    .append(linkGap())
                     .append(qqGroupLink());
         }
 
@@ -363,7 +375,9 @@ public final class Update {
             if (hasUpdate) {
                 return updateAvailableMessage();
             }
-            String text = Config.isChinese ? "当前已经是最新版本。" : "You are already on the latest version.";
+            String text = Config.isChinese
+                    ? "当前已经是最新版本（当前版本 " + currentTypedVersion() + "）。"
+                    : "You are already on the latest version (current: " + currentTypedVersion() + ").";
             return Component.literal(text).withStyle(ChatFormatting.GREEN);
         }
 
@@ -386,6 +400,10 @@ public final class Update {
                 style = style.withClickEvent(new ClickEvent.OpenUrl(URI.create(url)));
             }
             return Component.literal(text).withStyle(style);
+        }
+
+        private static MutableComponent linkGap() {
+            return Component.literal("  ").withStyle(ChatFormatting.GRAY);
         }
 
         private static MutableComponent qqGroupLink() {

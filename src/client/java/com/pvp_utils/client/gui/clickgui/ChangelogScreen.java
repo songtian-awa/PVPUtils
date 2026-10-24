@@ -5,9 +5,22 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChangelogScreen extends Screen {
+    private static final int TOP_PAD = 40;
+    private static final int BOTTOM_PAD = 34;
+    private static final int LINE_HEIGHT = 14;
+    private static final int LEFT_PAD = 30;
+    private static final int RIGHT_PAD = 30;
+    private static final int SCROLL_STEP = 16;
+    private float scrollOffset;
+    private float maxScroll;
+
     private static final String[] LINES_ZH = {
             "v1.8-beta.9",
+            "修复: 更新显示错位（更新日志支持滚动与裁剪，更新提示显示版本号）",
             "新增: 全语言翻译（基于 Minecraft 标准语言文件的多语言支持）",
             "新增: 更新地址选择（可在其他设置中选择宋天或白菜的更新源）",
             "新增: 单场战绩结算（对局结束自动统计本场 K/D / 命中率）",
@@ -67,6 +80,7 @@ public class ChangelogScreen extends Screen {
 
     private static final String[] LINES_EN = {
             "v1.8-beta.9",
+            "Fixed: Update display misalignment (changelog scroll & crop, version shown in update prompt)",
             "Added: Full language translation (multi-language support via Minecraft standard language files)",
             "Added: Match summary (auto-stat K/D and hit rate at round end)",
             "Added: Custom death screen (shows survival time / killer stats on death)",
@@ -132,12 +146,55 @@ public class ChangelogScreen extends Screen {
         super.render(graphics, mouseX, mouseY, partialTick);
         graphics.fillGradient(0, 0, this.width, this.height, 0xCC101418, 0xCC101418);
         String[] lines = Config.isChinese ? LINES_ZH : LINES_EN;
-        int y = 40;
+        int maxWidth = Math.max(80, this.width - LEFT_PAD - RIGHT_PAD);
+        List<String> displayLines = new ArrayList<>();
         for (String line : lines) {
-            graphics.drawString(this.font, line, 30, y, 0xFFF2F4F8, false);
-            y += 14;
+            wrapInto(displayLines, line, maxWidth);
         }
-        graphics.drawString(this.font, UiText.key("pvp_utils.changelog.back", "按 ESC 返回", "Press ESC to go back"), 30, y + 10, 0xFF9AA4B2, false);
+        int viewHeight = Math.max(0, this.height - TOP_PAD - BOTTOM_PAD);
+        maxScroll = Math.max(0f, displayLines.size() * LINE_HEIGHT - viewHeight);
+        scrollOffset = Math.max(0f, Math.min(maxScroll, scrollOffset));
+
+        graphics.enableScissor(0, TOP_PAD, this.width, this.height - BOTTOM_PAD);
+        int y = TOP_PAD - (int) scrollOffset;
+        for (String line : displayLines) {
+            graphics.drawString(this.font, line, LEFT_PAD, y, 0xFFF2F4F8, false);
+            y += LINE_HEIGHT;
+        }
+        graphics.disableScissor();
+        graphics.drawString(this.font, UiText.key("pvp_utils.changelog.back", "按 ESC 返回", "Press ESC to go back"), LEFT_PAD, this.height - 22, 0xFF9AA4B2, false);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+        if (maxScroll <= 0f) {
+            return false;
+        }
+        scrollOffset += (float) verticalAmount * SCROLL_STEP;
+        scrollOffset = Math.max(0f, Math.min(maxScroll, scrollOffset));
+        return true;
+    }
+
+    private static void wrapInto(List<String> target, String text, int maxWidthPx) {
+        int maxUnits = Math.max(8, maxWidthPx / 6);
+        StringBuilder builder = new StringBuilder();
+        int units = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            int width = isWideChar(c) ? 2 : 1;
+            if (units + width > maxUnits && builder.length() > 0) {
+                target.add(builder.toString());
+                builder.setLength(0);
+                units = 0;
+            }
+            builder.append(c);
+            units += width;
+        }
+        target.add(builder.toString());
+    }
+
+    private static boolean isWideChar(char c) {
+        return c >= 0x2E80 || c == '\u3000';
     }
 
     @Override
