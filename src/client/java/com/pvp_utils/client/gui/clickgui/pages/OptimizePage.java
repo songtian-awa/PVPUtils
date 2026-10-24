@@ -112,6 +112,6 @@ public class OptimizePage extends BasePage {
                         new SettingSlider(0.05, 0.99, "%.2f", () -> (double) Config.smoothHotbarAnimationSpeed, v -> { Config.smoothHotbarAnimationSpeed = v.floatValue(); Config.save(); })));
     }
 
-    @Override public String getTitle() { return UiText.t("优化设置", "Optimize Settings"); }
-    @Override public String getSubtitle() { return UiText.t("性能与优化相关参数", "Performance and optimization options"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.optimize.title", "优化设置", "Optimize Settings"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.optimize.subtitle", "性能与优化相关参数", "Performance and optimization options"); }
 }

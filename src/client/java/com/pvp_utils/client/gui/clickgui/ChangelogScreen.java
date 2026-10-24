@@ -1,12 +1,14 @@
 package com.pvp_utils.client.gui.clickgui;
 
+import com.pvp_utils.Config;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ChangelogScreen extends Screen {
-    private static final String[] LINES = {
+    private static final String[] LINES_ZH = {
             "v1.8-beta.9",
+            "新增: 全语言翻译（基于 Minecraft 标准语言文件的多语言支持）",
             "新增: 单场战绩结算（对局结束自动统计本场 K/D / 命中率）",
             "新增: 自定义死亡画面（死亡时显示存活时间 / 击杀者统计卡）",
             "新增: 击杀卡牌（击杀时在目标 HUD 下方展示击杀者 / 武器 / 伤害）",
@@ -62,20 +64,79 @@ public class ChangelogScreen extends Screen {
             "优化: 内存自动清理",
     };
 
+    private static final String[] LINES_EN = {
+            "v1.8-beta.9",
+            "Added: Full language translation (multi-language support via Minecraft standard language files)",
+            "Added: Match summary (auto-stat K/D and hit rate at round end)",
+            "Added: Custom death screen (shows survival time / killer stats on death)",
+            "Added: Kill card (shows killer / weapon / damage below the target HUD on kill)",
+            "Added: Local replays (lightweight battle replay recording and slow motion)",
+            "Added: Offline skin library (skin manager UI and quick switching)",
+            "Added: Official plugin system (JS plugin loading / management / dedicated plugin page)",
+            "Reverted: Removed local music library MP3 feature",
+            "Reverted: Removed Fabric API integration",
+            "Reverted: Removed Python automation console",
+            "Added: Inventory HUD (view items without opening inventory)",
+            "Added: Item count HUD (pearls / golden apples / crystals)",
+            "Added: Draggable combat log",
+            "Added: Left module bar wheel scrolling",
+            "Optimized: Liquid glass performance",
+            "Fixed: cosmetica-core compatibility",
+            "v1.8-beta.12",
+            "Added: Left module bar wheel scrolling",
+            "Fixed: Item count HUD quantity display",
+            "Added: Draggable combat log",
+            "v1.8-beta.16",
+            "Added: Inventory HUD (view items without opening inventory)",
+            "Added: Item count HUD (pearls / golden apples / crystals)",
+            "Added: Armor durability percentage toggle",
+            "Added: Liquid glass master toggle",
+            "Optimized: Liquid glass performance (~2x FPS improvement)",
+            "Fixed: Open folder button",
+            "v1.8-beta.15",
+            "Added: Local music library (MP3 drag-and-drop playback)",
+            "Added: MP3 ID3 lyrics extraction",
+            "Added: Local music UI in music page",
+            "Added: Merged official liquid glass renderer",
+            "v1.8-beta.14",
+            "Added: Combat log",
+            "Added: Enemy armor display",
+            "Added: Sodium compatibility check",
+            "Added: Left module bar wheel scrolling",
+            "Fixed: English translations",
+            "v1.8-beta.12",
+            "Added: PVPUtils player channel chat (requires PVPUtilsServer on the server)",
+            "Fixed: Dropped item radar draggable",
+            "v1.8-beta.11",
+            "Fixed: Kill lightning triggers on target death",
+            "Added: Offline skin fix",
+            "Added: Dropped item radar HUD",
+            "Added: Config presets: Default / PVP / Low-end optimization",
+            "Added: Particle optimization",
+            "Added: Custom panel colors",
+            "Added: Standalone chat window",
+            "Added: Changelog screen",
+            "Integrated: fabric-api bundled into the mod",
+            "Fixed: Entity render culling injection crash",
+            "Optimized: Entity render distance culling",
+            "Optimized: Automatic memory cleanup",
+    };
+
     public ChangelogScreen() {
-        super(Component.literal("Changelog"));
+        super(Component.literal(UiText.key("pvp_utils.changelog.title", "更新日志", "Changelog")));
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         graphics.fillGradient(0, 0, this.width, this.height, 0xCC101418, 0xCC101418);
+        String[] lines = Config.isChinese ? LINES_ZH : LINES_EN;
         int y = 40;
-        for (String line : LINES) {
+        for (String line : lines) {
             graphics.drawString(this.font, line, 30, y, 0xFFF2F4F8, false);
             y += 14;
         }
-        graphics.drawString(this.font, "按 ESC 返回", 30, y + 10, 0xFF9AA4B2, false);
+        graphics.drawString(this.font, UiText.key("pvp_utils.changelog.back", "按 ESC 返回", "Press ESC to go back"), 30, y + 10, 0xFF9AA4B2, false);
     }
 
     @Override

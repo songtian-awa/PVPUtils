@@ -42,6 +42,6 @@ public class MiscPage extends BasePage {
         }
     }
 
-    @Override public String getTitle() { return UiText.t("其他设置", "Misc Settings"); }
-    @Override public String getSubtitle() { return UiText.t("其他杂项功能", "Other miscellaneous features"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.misc.title", "其他设置", "Misc Settings"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.misc.subtitle", "其他杂项功能", "Other miscellaneous features"); }
 }

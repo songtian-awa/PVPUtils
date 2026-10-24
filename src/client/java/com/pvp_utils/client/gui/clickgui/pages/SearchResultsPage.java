@@ -15,11 +15,11 @@ public final class SearchResultsPage extends BasePage {
 
     @Override
     public String getTitle() {
-        return UiText.t("搜索结果", "Search Results");
+        return UiText.key("pvp_utils.page.search.title", "搜索结果", "Search Results");
     }
 
     @Override
     public String getSubtitle() {
-        return UiText.t("与“", "Matches for \"") + query + UiText.t("”匹配的功能", "\"");
+        return UiText.key("pvp_utils.page.search.subtitle", "与“", "Matches for \"") + query + UiText.key("pvp_utils.page.search.subtitleEnd", "”匹配的功能", "\"");
     }
 }

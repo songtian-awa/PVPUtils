@@ -397,8 +397,8 @@ public class RenderPage extends BasePage {
                         new SettingToggle(() -> Config.nameTagOnlyPlayer, v -> { Config.nameTagOnlyPlayer = v; Config.save(); })));
     }
 
-    @Override public String getTitle() { return UiText.t("视觉设置", "Render Settings"); }
-    @Override public String getSubtitle() { return UiText.t("调整视觉与动画效果", "Adjust visuals and animations"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.render.title", "视觉设置", "Render Settings"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.render.subtitle", "调整视觉与动画效果", "Adjust visuals and animations"); }
 
     private static void addSkinOption(SettingModule module, String type, String title) {
         module.addSub(title, "", new SettingToggle(

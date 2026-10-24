@@ -70,6 +70,6 @@ public class CombatPage extends BasePage {
                         new SettingSlider(1.0, 20.0, "%.0f", () -> (double) Math.max(1, Config.localReplayIdleTicks) / 20.0, v -> { Config.localReplayIdleTicks = Math.max(1, v.intValue()) * 20; Config.save(); })));
     }
 
-    @Override public String getTitle() { return UiText.t("战斗设置", "Combat Settings"); }
-    @Override public String getSubtitle() { return UiText.t("调整战斗相关参数", "Adjust combat options"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.combat.title", "战斗设置", "Combat Settings"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.combat.subtitle", "调整战斗相关参数", "Adjust combat options"); }
 }

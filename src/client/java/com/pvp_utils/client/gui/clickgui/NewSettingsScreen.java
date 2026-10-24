@@ -42,6 +42,7 @@ public class NewSettingsScreen extends SkiaScreen {
     private static final String[] TAB_ICON_FONTS = {FontRenderer.ICON, FontRenderer.ICON, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.ICON, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS, FontRenderer.MATERIAL_SYMBOLS};
     private static final String[] TAB_KEYS_ZH = {"战斗", "视觉", "工具", "优化", "其他", "主题", "音乐", "插件"};
     private static final String[] TAB_KEYS_EN = {"Combat", "Render", "Tools", "Optimize", "Misc", "Theme", "Music", "Plugins"};
+    private static final String[] TAB_KEYS_LANG = {"pvp_utils.tab.combat", "pvp_utils.tab.render", "pvp_utils.tab.tools", "pvp_utils.tab.optimize", "pvp_utils.tab.misc", "pvp_utils.tab.theme", "pvp_utils.tab.music", "pvp_utils.tab.plugins"};
 
     private int selectedTab = 0;
     private int hoveredTab = -1;
@@ -503,7 +504,7 @@ public class NewSettingsScreen extends SkiaScreen {
 
         FontRenderer.drawText(canvas, "PVPUtils", cardX + 18f, cardY + 38f, 16f, withAlpha(tc.primaryText, alpha));
         drawDebugOverlay(canvas, cardX, cardY, cardW, alpha, tc);
-        FontRenderer.drawText(canvas, UiText.t("在下方调整设置...", "Adjust the settings below..."), cardX + 18f, cardY + 54f, 10f, withAlpha(tc.secondaryText, alpha));
+        FontRenderer.drawText(canvas, UiText.key("pvp_utils.gui.adjustBelow", "在下方调整设置...", "Adjust the settings below..."), cardX + 18f, cardY + 54f, 10f, withAlpha(tc.secondaryText, alpha));
         drawSearchBox(canvas, searchX, searchY, searchW, searchH, alpha, dt, tc);
 
         indicatorPaint.setColor(withAlpha(tc.indicator, ClickGuiThemeColors.panelBackgroundAlpha(alpha)));
@@ -521,7 +522,7 @@ public class NewSettingsScreen extends SkiaScreen {
             int iconColor = active ? withAlpha(tc.accent, alpha) : withAlpha(tc.inactiveIcon, alpha);
             int textColor = active ? withAlpha(tc.accent, alpha) : withAlpha(tc.inactiveText, alpha);
             FontRenderer.drawText(canvas, TAB_ICONS[i], cardX + 18f, tabY + tabH / 2f + 6f, 13f, iconColor, TAB_ICON_FONTS[i]);
-            FontRenderer.drawText(canvas, UiText.t(TAB_KEYS_ZH[i], TAB_KEYS_EN[i]), cardX + 38f, tabY + tabH / 2f + 6f, 13f, textColor);
+            FontRenderer.drawText(canvas, UiText.key(TAB_KEYS_LANG[i], TAB_KEYS_ZH[i], TAB_KEYS_EN[i]), cardX + 38f, tabY + tabH / 2f + 6f, 13f, textColor);
         }
         canvas.restore();
 
@@ -531,7 +532,7 @@ public class NewSettingsScreen extends SkiaScreen {
         int resetTextColor = lerpColor(tc.buttonText, tc.dangerHoverText, resetHoverAlpha);
         resetBgPaint.setColor(withAlpha(resetBgColor, ClickGuiThemeColors.panelBackgroundAlpha(alpha)));
         canvas.drawRRect(RRect.makeXYWH(closeX, resetY, tabW, resetH, 8f), resetBgPaint);
-        String resetText = resetConfirm ? UiText.t("再次点击以确认", "Click Again to Confirm") : UiText.t("重置所有设置", "Reset All Settings");
+        String resetText = resetConfirm ? UiText.key("pvp_utils.gui.resetConfirm", "再次点击以确认", "Click Again to Confirm") : UiText.key("pvp_utils.gui.reset", "重置所有设置", "Reset All Settings");
         String resetIcon = "\uE042";
         if (!resetText.equals(cachedResetText)) {
             cachedResetText = resetText;
@@ -544,7 +545,7 @@ public class NewSettingsScreen extends SkiaScreen {
 
         closeBgPaint.setColor(withAlpha(closeBgColor, ClickGuiThemeColors.panelBackgroundAlpha(alpha)));
         canvas.drawRRect(RRect.makeXYWH(closeX, closeY, tabW, closeH, 8f), closeBgPaint);
-        String closeText = UiText.t("× 关闭", "× Close");
+        String closeText = UiText.key("pvp_utils.gui.close", "× 关闭", "× Close");
         if (!closeText.equals(cachedCloseText)) {
             cachedCloseText = closeText;
             cachedCloseTextWidth = FontRenderer.measureTextWidth(closeText, 12f);
@@ -552,8 +553,8 @@ public class NewSettingsScreen extends SkiaScreen {
         FontRenderer.drawText(canvas, closeText, closeX + (tabW - cachedCloseTextWidth) / 2f, closeY + 22f, 12f, withAlpha(closeTextColor, alpha));
 
         if (themePreviewMode) {
-            FontRenderer.drawText(canvas, UiText.t("面板主题", "Panel Theme"), contentX + 18f, contentY + 26f, 18f, withAlpha(tc.primaryText, alpha));
-            FontRenderer.drawText(canvas, UiText.t("点击缩略图切换面板配色", "Click a thumbnail to switch the panel theme"), contentX + 18f, contentY + 42f, 10f, withAlpha(tc.secondaryText, alpha));
+            FontRenderer.drawText(canvas, UiText.key("pvp_utils.theme.title", "面板主题", "Panel Theme"), contentX + 18f, contentY + 26f, 18f, withAlpha(tc.primaryText, alpha));
+            FontRenderer.drawText(canvas, UiText.key("pvp_utils.theme.subtitle", "点击缩略图切换面板配色", "Click a thumbnail to switch the panel theme"), contentX + 18f, contentY + 42f, 10f, withAlpha(tc.secondaryText, alpha));
             float backX = themeBackX(contentX, contentW);
             hoverPaint.setColor(withAlpha(themeBackHovered ? tc.hoverBackground : tc.subModule, ClickGuiThemeColors.panelBackgroundAlpha(alpha)));
             canvas.drawRRect(RRect.makeXYWH(backX, contentY + 12f, 28f, 28f, 6f), hoverPaint);
@@ -685,7 +686,7 @@ public class NewSettingsScreen extends SkiaScreen {
         float textX = x + 28f;
         float textW = Math.max(1f, width - 36f);
         boolean empty = searchText.isEmpty();
-        String display = empty ? UiText.t("\u8F93\u5165\u4EE5\u67E5\u627E...", "Type to search...") : searchText;
+        String display = empty ? UiText.key("pvp_utils.gui.searchPlaceholder", "\u8F93\u5165\u4EE5\u67E5\u627E...", "Type to search...") : searchText;
         float realTextWidth = FontRenderer.measureTextWidth(searchText, 10f);
         float targetOffset = empty ? 0f : Math.max(0f, realTextWidth - textW + 3f);
         searchTextOffset = lerp(searchTextOffset, targetOffset, dt * 16f);

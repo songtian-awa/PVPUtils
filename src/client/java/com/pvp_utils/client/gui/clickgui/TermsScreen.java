@@ -17,7 +17,7 @@ public class TermsScreen extends Screen {
     private final int buttonH = 24;
 
     public TermsScreen(Screen parent) {
-        super(Component.literal(Config.isChinese ? "使用须知" : "Terms of Use"));
+        super(Component.literal(UiText.key("pvp_utils.terms.title", "使用须知", "Terms of Use")));
         this.parent = parent;
     }
 
@@ -34,24 +34,19 @@ public class TermsScreen extends Screen {
         int center = this.width / 2;
         graphics.drawCenteredString(this.font, this.title, center, 36, 0xFFFFFFFF);
 
-        if (Config.isChinese) {
-            drawCentered(graphics, "本模组包含可能被部分服务器限制的功能，请先阅读规则文件。", center, 82, 0xFFFFFFFF);
-            drawCentered(graphics, "阅读后点击“我同意以上条款”即可打开设置界面。", center, 98, 0xFFFFFFFF);
-        } else {
-            drawCentered(graphics, "This mod includes features that may be restricted by some servers.", center, 82, 0xFFFFFFFF);
-            drawCentered(graphics, "Read the rules file first, then click “I agree to the terms” to continue.", center, 98, 0xFFFFFFFF);
-        }
+        drawCentered(graphics, UiText.key("pvp_utils.terms.intro1", "本模组包含可能被部分服务器限制的功能，请先阅读规则文件。", "This mod includes features that may be restricted by some servers."), center, 82, 0xFFFFFFFF);
+        drawCentered(graphics, UiText.key("pvp_utils.terms.intro2", "阅读后点击“我同意以上条款”即可打开设置界面。", "Read the rules file first, then click “I agree to the terms” to continue."), center, 98, 0xFFFFFFFF);
 
         if (!openedRules) {
             drawCentered(graphics,
-                    Config.isChinese ? "请先打开并阅读规则文件。" : "Open and read the rules file first.",
+                    UiText.key("pvp_utils.terms.needRead", "请先打开并阅读规则文件。", "Open and read the rules file first."),
                     center, this.height - 106, 0xFFFFD166);
         }
 
         drawButton(graphics, agreeX, buttonY, buttonW, buttonH, mouseX, mouseY,
-                0xFF3DBB58, Config.isChinese ? "我同意以上条款" : "I Agree to the Terms", !openedRules);
+                0xFF3DBB58, UiText.key("pvp_utils.terms.agree", "我同意以上条款", "I Agree to the Terms"), !openedRules);
         drawButton(graphics, rulesX, buttonY, buttonW, buttonH, mouseX, mouseY,
-                0xFF3A3A3A, Config.isChinese ? "打开规则文件" : "Open Rules File", false);
+                0xFF3A3A3A, UiText.key("pvp_utils.terms.openRules", "打开规则文件", "Open Rules File"), false);
     }
 
     private void drawButton(GuiGraphics graphics, int x, int y, int w, int h,

@@ -104,12 +104,12 @@ public final class PluginPage extends BasePage {
 
     @Override
     public String getTitle() {
-        return UiText.t("插件", "Plugins");
+        return UiText.key("pvp_utils.page.plugin.title", "插件", "Plugins");
     }
 
     @Override
     public String getSubtitle() {
-        return UiText.t("添加与管理插件", "Add and manage plugins");
+        return UiText.key("pvp_utils.page.plugin.subtitle", "添加与管理插件", "Add and manage plugins");
     }
 
     @Override

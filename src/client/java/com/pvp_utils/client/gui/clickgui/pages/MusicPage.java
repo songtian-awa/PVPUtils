@@ -1,6 +1,4 @@
 package com.pvp_utils.client.gui.clickgui.pages;
-
-import com.pvp_utils.Config;
 import com.pvp_utils.client.NeteaseMusic.MusicPlaybackService;
 import com.pvp_utils.client.NeteaseMusic.NeteaseMusicManager;
 import com.pvp_utils.client.NeteaseMusic.Song;
@@ -54,12 +52,12 @@ public class MusicPage extends BasePage {
                 })));
     }
 
-    @Override public String getTitle() { return UiText.t("音乐", "Music"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.music.title", "音乐", "Music"); }
     @Override public String getSubtitle() {
         Song song = MusicPlaybackService.INSTANCE.currentSong();
         if (song != null) {
             return song.name() + " · " + song.displayArtist();
         }
-        return Config.isChinese ? "未在播放" : "Nothing playing";
+        return UiText.key("pvp_utils.music.nothingPlaying", "未在播放", "Nothing playing");
     }
 }

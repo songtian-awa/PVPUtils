@@ -3,6 +3,7 @@ package com.pvp_utils.client.gui.clickgui.widget;
 import com.pvp_utils.Config;
 import com.pvp_utils.client.NeteaseMusic.MusicPlaybackService;
 import com.pvp_utils.client.NeteaseMusic.Song;
+import com.pvp_utils.client.gui.clickgui.UiText;
 import com.pvp_utils.client.gui.clickgui.theme.ClickGuiThemeColors;
 import com.pvp_utils.client.render.font.FontRenderer;
 import io.github.humbleui.skija.Canvas;
@@ -27,7 +28,7 @@ public class MusicInfoWidget extends SettingWidget {
 
         Song song = MusicPlaybackService.INSTANCE.currentSong();
         if (song == null) {
-            FontRenderer.drawText(canvas, Config.isChinese ? "未在播放" : "Idle", x + 10f, y + H / 2f + 4f, 11f, withAlpha(tc.secondaryText, alpha));
+            FontRenderer.drawText(canvas, UiText.key("pvp_utils.music.nothingPlaying", "未在播放", "Nothing playing"), x + 10f, y + H / 2f + 4f, 11f, withAlpha(tc.secondaryText, alpha));
             return;
         }
 

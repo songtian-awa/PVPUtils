@@ -38,9 +38,7 @@ public class AddServerPage extends BasePage {
     private void confirm() {
         String address = addressDraft == null ? "" : addressDraft.trim();
         if (address.isEmpty()) {
-            ChatUtils.warning(Config.isChinese
-                    ? "请先填写服务器地址。"
-                    : "Fill in the server address first.");
+            ChatUtils.warning(UiText.key("pvp_utils.addServer.needAddress", "请先填写服务器地址。", "Fill in the server address first."));
             return;
         }
         ServerAutoLoginManager.setRule(address, passwordDraft == null ? "" : passwordDraft, delayDraft);
@@ -53,6 +51,6 @@ public class AddServerPage extends BasePage {
         }
     }
 
-    @Override public String getTitle() { return UiText.t("添加自动登录服务器", "Add Auto Login Server"); }
-    @Override public String getSubtitle() { return UiText.t("填写服务器信息后确认添加", "Fill in the server info and confirm"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.addServer.title", "添加自动登录服务器", "Add Auto Login Server"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.addServer.subtitle", "填写服务器信息后确认添加", "Fill in the server info and confirm"); }
 }

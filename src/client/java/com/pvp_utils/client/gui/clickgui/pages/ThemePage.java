@@ -156,6 +156,6 @@ public class ThemePage extends BasePage {
                                 })));
     }
 
-    @Override public String getTitle() { return UiText.t("主题设置", "Theme Settings"); }
-    @Override public String getSubtitle() { return UiText.t("全局 HUD 主题与模糊", "Global HUD theme and blur"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.theme.title", "主题设置", "Theme Settings"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.theme.subtitle", "全局 HUD 主题与模糊", "Global HUD theme and blur"); }
 }

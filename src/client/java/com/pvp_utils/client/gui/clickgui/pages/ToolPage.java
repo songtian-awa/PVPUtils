@@ -288,6 +288,6 @@ public class ToolPage extends BasePage {
                 new SettingToggle(() -> Config.optimizationModsPanel, v -> { Config.optimizationModsPanel = v; Config.save(); })));
     }
 
-    @Override public String getTitle() { return UiText.t("工具设置", "Tool Settings"); }
-    @Override public String getSubtitle() { return UiText.t("实用工具与辅助功能", "Utility and helper features"); }
+    @Override public String getTitle() { return UiText.key("pvp_utils.page.tool.title", "工具设置", "Tool Settings"); }
+    @Override public String getSubtitle() { return UiText.key("pvp_utils.page.tool.subtitle", "实用工具与辅助功能", "Utility and helper features"); }
 }
